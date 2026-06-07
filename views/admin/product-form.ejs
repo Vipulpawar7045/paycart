@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>PayCart — <%= product ? 'Edit' : 'Add' %> Product</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<%- include('../partials/navbar') %>
+<main class="container">
+  <a href="/admin" class="back-link">← Back to Dashboard</a>
+  <div class="auth-card" style="max-width:520px;margin:20px auto">
+    <h2><%= product ? 'Edit Product' : 'Add New Product' %></h2>
+    <form method="POST" action="<%= product ? '/admin/products/edit/' + product.id : '/admin/products/add' %>">
+      <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" name="name" value="<%= product ? product.name : '' %>" required/>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <input type="text" name="category" value="<%= product ? product.category : '' %>"/>
+      </div>
+      <div class="form-group">
+        <label>Price (₹)</label>
+        <input type="number" name="price" step="0.01" value="<%= product ? product.price : '' %>" required/>
+      </div>
+      <div class="form-group">
+        <label>Stock</label>
+        <input type="number" name="stock" value="<%= product ? product.stock : '' %>" required/>
+      </div>
+      <div class="form-group">
+        <label>Image URL</label>
+        <input type="text" name="image_url" value="<%= product ? product.image_url : '' %>"/>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" rows="3"><%= product ? product.description : '' %></textarea>
+      </div>
+      <button type="submit" class="btn-full"><%= product ? 'Update Product' : 'Add Product' %></button>
+    </form>
+  </div>
+</main>
+</body>
+</html>

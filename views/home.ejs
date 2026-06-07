@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PayCart — Shop</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<%- include('partials/navbar') %>
+
+<main class="container">
+  <!-- Flash messages -->
+  <% if (success_msg.length > 0) { %>
+    <div class="alert alert-success"><%= success_msg %></div>
+  <% } %>
+  <% if (error_msg.length > 0) { %>
+    <div class="alert alert-error"><%= error_msg %></div>
+  <% } %>
+
+  <div class="page-header">
+    <h2><%= search ? `Results for "${search}"` : 'All Products' %></h2>
+    <span class="product-count"><%= products.length %> products</span>
+  </div>
+
+  <% if (products.length === 0) { %>
+    <div class="empty-cart">
+      <p>No products found. <a href="/">View all products</a></p>
+    </div>
+  <% } %>
+
+  <div class="product-grid">
+    <% products.forEach(product => { %>
+      <div class="product-card">
+        <a href="/products/<%= product.id %>">
+          <img src="<%= product.image_url %>" alt="<%= product.name %>"/>
+        </a>
+        <div class="product-info">
+          <span class="category-tag"><%= product.category %></span>
+          <h3><a href="/products/<%= product.id %>"><%= product.name %></a></h3>
+          <p class="product-desc"><%= product.description %></p>
+          <div class="product-footer">
+            <span class="price">₹<%= Number(product.price).toFixed(2) %></span>
+            <% if (user) { %>
+              <form method="POST" action="/cart/add">
+                <input type="hidden" name="productId" value="<%= product.id %>"/>
+                <input type="hidden" name="quantity"  value="1"/>
+                <button type="submit" class="btn-add">Add to Cart</button>
+              </form>
+            <% } else { %>
+              <a href="/login" class="btn-add">Login to Buy</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title><%= product.name %> — PayCart</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<%- include('partials/navbar') %>
+
+<main class="container">
+  <a href="/" class="back-link">← Back to Products</a>
+
+  <div class="product-detail-card">
+    <img src="<%= product.image_url %>" alt="<%= product.name %>" class="detail-img"/>
+    <div class="detail-info">
+      <span class="category-tag"><%= product.category %></span>
+      <h1><%= product.name %></h1>
+      <p class="detail-desc"><%= product.description %></p>
+      <div class="detail-price">₹<%= Number(product.price).toFixed(2) %></div>
+
+      <p class="<%= product.stock > 0 ? 'in-stock' : 'out-of-stock' %>">
+        <%= product.stock > 0 ? `✅ In Stock (${product.stock} available)` : '❌ Out of Stock' %>
+      </p>
+
+      <% if (user && product.stock > 0) { %>
+        <form method="POST" action="/cart/add" class="detail-form">
+          <input type="hidden" name="productId" value="<%= product.id %>"/>
+          <div class="qty-row">
+            <label>Quantity:</label>
+            <input type="number" name="quantity" value="1" min="1" max="<%= product.stock %>" class="qty-input"/>
+            <button type="submit" class="btn-add">🛍️ Add to Cart</button>
+          </div>
+        </form>
+      <% } else if (!user) { %>
+        <a href="/login" class="btn-checkout">Login to Buy</a>
+      <% } %>
+    </div>
+  </div>
+</main>
+</body>
+</html>

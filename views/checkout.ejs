@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>PayCart — Checkout</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+<%- include('partials/navbar') %>
+
+<main class="container">
+  <h2>Checkout</h2>
+  <div class="checkout-layout">
+
+    <!-- Order Summary -->
+    <div class="checkout-items">
+      <h3>Order Summary</h3>
+      <table class="cart-table">
+        <thead>
+          <tr><th>Product</th><th>Qty</th><th>Amount</th></tr>
+        </thead>
+        <tbody>
+          <% items.forEach(item => { %>
+            <tr>
+              <td><%= item.name %></td>
+              <td><%= item.quantity %></td>
+              <td>₹<%= Number(item.subtotal).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <div class="cart-total">
+        <strong>Total: ₹<%= Number(total).toFixed(2) %></strong>
+      </div>
+    </div>
+
+    <!-- Pay Now Card -->
+    <div class="payment-card">
+      <h3>💳 Payment</h3>
+      <p>You are about to pay <strong>₹<%= Number(total).toFixed(2) %></strong> via Razorpay.</p>
+      <p class="secure-note">🔒 100% secure payment. Your card details are never stored.</p>
+
+      <button id="pay-btn" class="btn-full btn-pay">Pay ₹<%= Number(total).toFixed(2) %> Now</button>
+
+      <!-- Hidden form submitted after Razorpay success -->
+      <form id="payment-form" method="POST" action="/payment/success">
+        <input type="hidden" id="rzp_order_id"   name="razorpay_order_id"/>
+        <input type="hidden" id="rzp_payment_id" name="razorpay_payment_id"/>
+        <input type="hidden" id="rzp_signature"  name="razorpay_signature"/>
+      </form>
+
+      <div class="test-info">
+        <p><strong>Test Card Numbers:</strong></p>
+        <p>Card: 4111 1111 1111 1111</p>
+        <p>Expiry: Any future date | CVV: Any 3 digits</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  var options = {
+    key:         '<%= rzpKeyId %>',
+    amount:      <%= amountInPaise %>,
+    currency:    'INR',
+    name:        'PayCart',
+    description: 'Order #<%= orderId %>',
+    order_id:    '<%= rzpOrderId %>',
+    prefill: {
+      name:  '<%= userName %>',
+      email: '<%= userEmail %>',
+    },
+    theme: { color: '#4F46E5' },
+    handler: function(response) {
+      document.getElementById('rzp_order_id').value   = response.razorpay_order_id;
+      document.getElementById('rzp_payment_id').value = response.razorpay_payment_id;
+      document.getElementById('rzp_signature').value  = response.razorpay_signature;
+      document.getElementById('payment-form').submit();
+    },
+    modal: {
+      ondismiss: function() {
+        alert('Payment cancelled. You can retry from your cart.');
+      }
+    }
+  };
+
+  document.getElementById('pay-btn').addEventListener('click', function() {
+    var rzp = new Razorpay(options);
+    rzp.open();
+  });
+</script>
+</body>
+</html>

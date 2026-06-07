@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>PayCart — My Orders</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<%- include('partials/navbar') %>
+
+<main class="container">
+  <h2>My Orders</h2>
+
+  <% if (orders.length === 0) { %>
+    <div class="empty-cart">
+      <div style="font-size:48px">📋</div>
+      <p>No orders yet.</p>
+      <a href="/" class="btn-checkout">Start Shopping</a>
+    </div>
+  <% } else { %>
+    <% orders.forEach(order => { %>
+      <div class="order-card">
+        <div class="order-header">
+          <span><strong>Order #<%= order.id %></strong></span>
+          <span class="order-date"><%= new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) %></span>
+          <span class="order-status status-<%= order.status.toLowerCase() %>"><%= order.status %></span>
+          <strong>₹<%= Number(order.total_amount).toFixed(2) %></strong>
+        </div>
+        <table class="cart-table">
+          <thead>
+            <tr><th>Product</th><th>Qty</th><th>Price</th></tr>
+          </thead>
+          <tbody>
+            <% order.items.forEach(item => { %>
+              <tr>
+                <td><%= item.name %></td>
+                <td><%= item.quantity %></td>
+                <td>₹<%= Number(item.price * item.quantity).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% }) %>
+  <% } %>
+</main>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>PayCart — Cart</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<%- include('partials/navbar') %>
+
+<main class="container">
+  <h2>Your Cart</h2>
+
+  <% if (items.length === 0) { %>
+    <div class="empty-cart">
+      <div style="font-size:48px">🛍️</div>
+      <p>Your cart is empty.</p>
+      <a href="/" class="btn-checkout">Start Shopping</a>
+    </div>
+  <% } else { %>
+    <div class="cart-layout">
+      <table class="cart-table">
+        <thead>
+          <tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr>
+        </thead>
+        <tbody>
+          <% items.forEach(item => { %>
+            <tr>
+              <td>
+                <div class="cart-product">
+                  <img src="<%= item.image_url %>" alt="<%= item.name %>"/>
+                  <span><%= item.name %></span>
+                </div>
+              </td>
+              <td>₹<%= Number(item.price).toFixed(2) %></td>
+              <td>
+                <form method="POST" action="/cart/update" class="qty-form">
+                  <input type="hidden" name="itemId" value="<%= item.id %>"/>
+                  <input type="number" name="quantity" value="<%= item.quantity %>"
+                         min="1" max="99" class="qty-input-sm"
+                         onchange="this.form.submit()"/>
+                </form>
+              </td>
+              <td><strong>₹<%= Number(item.subtotal).toFixed(2) %></strong></td>
+              <td>
+                <form method="POST" action="/cart/remove/<%= item.id %>">
+                  <button type="submit" class="btn-remove" title="Remove">✕</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <div class="cart-summary">
+        <h3>Order Summary</h3>
+        <div class="summary-row">
+          <span>Subtotal</span><span>₹<%= Number(total).toFixed(2) %></span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span><span class="free">FREE</span>
+        </div>
+        <div class="summary-row total-row">
+          <span>Total</span><span>₹<%= Number(total).toFixed(2) %></span>
+        </div>
+        <a href="/payment/checkout" class="btn-full btn-checkout">Proceed to Checkout →</a>
+      </div>
+    </div>
+  <% } %>
+</main>
+</body>
+</html>

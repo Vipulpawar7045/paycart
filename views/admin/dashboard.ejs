@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>PayCart — Admin</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<%- include('../partials/navbar') %>
+<main class="container">
+  <div class="admin-header">
+    <h2>⚙️ Product Management</h2>
+    <div style="display:flex;gap:10px">
+      <a href="/admin/orders" class="btn-add">View All Orders</a>
+      <a href="/admin/products/add" class="btn-checkout">+ Add Product</a>
+    </div>
+  </div>
+
+  <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+
+  <table class="cart-table">
+    <thead>
+      <tr><th>ID</th><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      <% products.forEach(p => { %>
+        <tr>
+          <td>#<%= p.id %></td>
+          <td><img src="<%= p.image_url %>" style="width:50px;height:36px;object-fit:cover;border-radius:4px"/></td>
+          <td><%= p.name %></td>
+          <td><%= p.category %></td>
+          <td>₹<%= Number(p.price).toFixed(2) %></td>
+          <td><%= p.stock %></td>
+          <td style="display:flex;gap:6px">
+            <a href="/admin/products/edit/<%= p.id %>" class="btn-add">Edit</a>
+            <form method="POST" action="/admin/products/delete/<%= p.id %>"
+                  onsubmit="return confirm('Delete this product?')">
+              <button type="submit" class="btn-remove">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>
